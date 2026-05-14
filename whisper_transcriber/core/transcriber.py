@@ -1,6 +1,6 @@
 from pathlib import Path
 from whisper_transcriber.logger import setup_logger
-from whisper_transcriber.core.formats import save_srt
+from whisper_transcriber.core.formats import save_srt, save_txt
 
 logger = setup_logger()
 
@@ -21,7 +21,7 @@ def transcribe_file(model, file_path: Path, output_dir: Path, config):
     text = "\n".join(seg.text for seg in segments)
 
     txt_file = output_dir / f"{file_path.stem}.txt"
-    txt_file.write_text(text, encoding="utf-8")
+    save_txt(segments, txt_file)
 
     srt_file = output_dir / f"{file_path.stem}.srt"
     save_srt(segments, srt_file)

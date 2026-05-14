@@ -2,6 +2,10 @@ from pathlib import Path
 from whisper_transcriber.utils import format_timestamp
 
 
+def save_txt(segments, output_file: Path):
+    text = "\n".join(seg.text for seg in segments)
+    output_file.write_text(text, encoding="utf-8")
+
 def save_srt(segments, output_file: Path):
     lines = []
 
