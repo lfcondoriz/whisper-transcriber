@@ -105,3 +105,8 @@ El modelo se guarda en la carpeta `~/.cache/huggingface/hub/` después de la pri
 
 ## Test
 Utilizamos el videos de prueba de [YouTube - De PayPal a SpaceX: la apuesta que lo cambió todo](https://www.youtube.com/watch?v=6ahkjtgL28k&t=297s) para probar el transcriptor.
+
+## Ejecución
+```bash
+python -m whisper_transcriber.main
+```
