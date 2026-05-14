@@ -1,7 +1,9 @@
 from pathlib import Path
 from faster_whisper import WhisperModel
 from whisper_transcriber.config import Config
+from whisper_transcriber.logger import setup_logger
 
+logger = setup_logger()
 
 def create_model(config: Config):
     return WhisperModel(
@@ -12,7 +14,7 @@ def create_model(config: Config):
 
 
 def transcribe_file(model, file_path: Path, output_dir: Path):
-    print(f"Transcribing: {file_path.name}")
+    logger.info(f"Transcribing: {file_path.name}")
 
     segments, _ = model.transcribe(str(file_path))
 
@@ -22,7 +24,7 @@ def transcribe_file(model, file_path: Path, output_dir: Path):
 
     output_file.write_text(text, encoding="utf-8")
 
-    print(f"Saved: {output_file}")
+    logger.info(f"Saved: {output_file}")
 
 
 def process_input_files(model, config: Config):
@@ -33,6 +35,11 @@ def process_input_files(model, config: Config):
 
     supported = {".mp3", ".mp4", ".wav", ".mkv", ".flac"}
 
+    logger.info("Starting transcription pipeline")
+    logger.info(f"Input dir: {input_dir}")
+    logger.info(f"Output dir: {output_dir}")
+
     for file in input_dir.iterdir():
         if file.suffix.lower() in supported:
+            logger.info(f"Processing file: {file.name}")
             transcribe_file(model, file, output_dir)

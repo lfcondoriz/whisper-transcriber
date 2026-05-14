@@ -4,7 +4,9 @@ from whisper_transcriber.transcriber import (
     create_model,
     process_input_files
 )
+from whisper_transcriber.logger import setup_logger
 
+logger = setup_logger()
 
 def main():
     args = parse_args()
