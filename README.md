@@ -1,0 +1,2 @@
+# whisper-transcriber
+Whisper Transcriber
