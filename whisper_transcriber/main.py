@@ -1,12 +1,8 @@
 from whisper_transcriber.cli import parse_args
 from whisper_transcriber.config import Config
-from whisper_transcriber.transcriber import (
-    create_model,
-    process_input_files
-)
-from whisper_transcriber.logger import setup_logger
+from whisper_transcriber.core.model import create_model
+from whisper_transcriber.core.transcriber import process_input_files
 
-logger = setup_logger()
 
 def main():
     args = parse_args()
@@ -15,10 +11,10 @@ def main():
         model=args.model,
         device=args.device,
         compute_type=args.compute_type,
-        language=args.language,
-        task=args.task,
         input_dir=args.input,
         output_dir=args.output,
+        language=args.language,
+        task=args.task
     )
 
     model = create_model(config)
