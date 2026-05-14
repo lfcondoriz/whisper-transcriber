@@ -13,10 +13,14 @@ def create_model(config: Config):
     )
 
 
-def transcribe_file(model, file_path: Path, output_dir: Path):
+def transcribe_file(model, file_path: Path, output_dir: Path, config: Config):
     logger.info(f"Transcribing: {file_path.name}")
 
-    segments, _ = model.transcribe(str(file_path))
+    segments, _ = model.transcribe(
+        str(file_path),
+        language=config.language,
+        task=config.task
+    )
 
     text = "\n".join([seg.text for seg in segments])
 
@@ -42,4 +46,4 @@ def process_input_files(model, config: Config):
     for file in input_dir.iterdir():
         if file.suffix.lower() in supported:
             logger.info(f"Processing file: {file.name}")
-            transcribe_file(model, file, output_dir)
+            transcribe_file(model, file, output_dir, config)

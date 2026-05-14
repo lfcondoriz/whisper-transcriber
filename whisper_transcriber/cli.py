@@ -28,6 +28,21 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--language",
+        type=str,
+        default=None,
+        help="Language code (e.g. 'es', 'en'). Use None for auto-detect"
+    )
+
+    parser.add_argument(
+        "--task",
+        type=str,
+        default="transcribe",
+        choices=["transcribe", "translate"],
+        help="Task mode: transcribe (same language) or translate (to English)"
+    )    
+
+    parser.add_argument(
         "--input",
         type=str,
         default="data/input",

@@ -107,10 +107,19 @@ El modelo se guarda en la carpeta `~/.cache/huggingface/hub/` después de la pri
 Utilizamos el videos de prueba de [YouTube - De PayPal a SpaceX: la apuesta que lo cambió todo](https://www.youtube.com/watch?v=6ahkjtgL28k&t=297s) para probar el transcriptor.
 
 ## Ejecución
+Default:
 ```bash
 python -m whisper_transcriber.main
 ```
 
+Con opciones:
 ```bash
-python -m whisper_transcriber.main --model base --device cuda --input data/input --output data/output
+python -m whisper_transcriber.main --model base --language es --task translate --device cuda --input data/input --output data/output
 ```
+Donde:
+- `--model`: el modelo de Whisper a usar (tiny, base, small, medium, large)
+- `--device`: el dispositivo a usar (cpu o cuda)
+- `--input`: la carpeta de entrada con los archivos de audio/video a transcribir
+- `--output`: la carpeta de salida donde se guardarán las transcripciones
+- `--language`: el código del idioma (por ejemplo, 'es', 'en'). Usa None para auto-detección
+- `--task`: el modo de tarea: transcribe (mismo idioma) o translate (a inglés) (Whisper NO tiene traducción multi-idioma real SOLO en inglés.)

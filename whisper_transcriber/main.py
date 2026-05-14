@@ -15,8 +15,10 @@ def main():
         model=args.model,
         device=args.device,
         compute_type=args.compute_type,
+        language=args.language,
+        task=args.task,
         input_dir=args.input,
-        output_dir=args.output
+        output_dir=args.output,
     )
 
     model = create_model(config)
