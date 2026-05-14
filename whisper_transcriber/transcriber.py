@@ -1,48 +1,38 @@
 from pathlib import Path
-
 from faster_whisper import WhisperModel
+from whisper_transcriber.config import Config
 
 
-INPUT_DIR = Path("data/input")
-OUTPUT_DIR = Path("data/output")
+def create_model(config: Config):
+    return WhisperModel(
+        config.model,
+        device=config.device,
+        compute_type=config.compute_type
+    )
 
 
-model = WhisperModel(
-    "base",
-    device="cpu",
-    compute_type="int8"
-)
-
-
-def transcribe_file(file_path: Path) -> None:
+def transcribe_file(model, file_path: Path, output_dir: Path):
     print(f"Transcribing: {file_path.name}")
 
-    segments, info = model.transcribe(str(file_path))
+    segments, _ = model.transcribe(str(file_path))
 
-    transcription = []
+    text = "\n".join([seg.text for seg in segments])
 
-    for segment in segments:
-        transcription.append(segment.text)
+    output_file = output_dir / f"{file_path.stem}.txt"
 
-    output_file = OUTPUT_DIR / f"{file_path.stem}.txt"
-
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write("\n".join(transcription))
+    output_file.write_text(text, encoding="utf-8")
 
     print(f"Saved: {output_file}")
 
 
-def process_input_files() -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+def process_input_files(model, config: Config):
+    input_dir = Path(config.input_dir)
+    output_dir = Path(config.output_dir)
 
-    supported_extensions = [
-        ".mp3",
-        ".wav",
-        ".mp4",
-        ".mkv",
-        ".flac",
-    ]
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    for file_path in INPUT_DIR.iterdir():
-        if file_path.suffix.lower() in supported_extensions:
-            transcribe_file(file_path)
+    supported = {".mp3", ".mp4", ".wav", ".mkv", ".flac"}
+
+    for file in input_dir.iterdir():
+        if file.suffix.lower() in supported:
+            transcribe_file(model, file, output_dir)

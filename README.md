@@ -110,3 +110,7 @@ Utilizamos el videos de prueba de [YouTube - De PayPal a SpaceX: la apuesta que 
 ```bash
 python -m whisper_transcriber.main
 ```
+
+```bash
+python -m whisper_transcriber.main --model base --device cuda --input data/input --output data/output
+```
