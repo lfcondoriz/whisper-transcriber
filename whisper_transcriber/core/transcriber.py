@@ -1,6 +1,6 @@
 from pathlib import Path
+from whisper_transcriber.exporters.manager import ExportManager
 from whisper_transcriber.logger import setup_logger
-from whisper_transcriber.core.formats import save_srt, save_txt
 
 logger = setup_logger()
 
@@ -18,15 +18,15 @@ def transcribe_file(model, file_path: Path, output_dir: Path, config):
 
     segments = list(segments)
 
-    text = "\n".join(seg.text for seg in segments)
+    export_manager = ExportManager(
+        segments=segments,
+        output_dir=output_dir,
+        file_path=file_path
+    )
 
-    txt_file = output_dir / f"{file_path.stem}.txt"
-    save_txt(segments, txt_file)
+    export_manager.export_all()
 
-    srt_file = output_dir / f"{file_path.stem}.srt"
-    save_srt(segments, srt_file)
-
-    logger.info(f"Saved: {txt_file}")
+    logger.info(f"Saved: {file_path.name} in {output_dir}")
 
 
 def process_input_files(model, config):
@@ -37,6 +37,6 @@ def process_input_files(model, config):
 
     logger.info("Starting pipeline")
 
-    for file in input_dir.iterdir():
-        if file.suffix.lower() in SUPPORTED:
-            transcribe_file(model, file, output_dir, config)
+    for file_path  in input_dir.iterdir():
+        if file_path .suffix.lower() in SUPPORTED:
+            transcribe_file(model,  file_path, output_dir, config)
