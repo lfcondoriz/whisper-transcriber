@@ -2,36 +2,52 @@ import argparse
 
 
 def parse_args():
+
     parser = argparse.ArgumentParser(
-        description="Whisper Transcriber CLI"
+        prog="whisper_transcriber",
+        description="Fast batch audio/video transcription using faster-whisper.",
+        epilog="""
+            Examples:
+            python -m whisper_transcriber --language es
+            python -m whisper_transcriber --model large-v3
+            python -m whisper_transcriber --formats srt txt json
+            python -m whisper_transcriber --task translate
+            python -m whisper_transcriber --verbose
+            """,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
     parser.add_argument(
         "--model",
         type=str,
         default="base",
-        help="Whisper model size (tiny, base, small, medium, large)"
+        help=(
+            "Whisper model to use "
+            "(tiny, base, small, medium, large-v3, large-v3-turbo)"
+        )
     )
 
     parser.add_argument(
         "--device",
         type=str,
         default="cuda",
-        help="Device to run inference on (cpu or cuda)"
+        choices=["cpu", "cuda"],
+        help="Inference device"
     )
 
     parser.add_argument(
         "--compute_type",
         type=str,
         default="float16",
-        help="Compute type for model (float32 (high precision), float16 (mixed precision), int8 (quantized))"
+        choices=["float32", "float16", "int8"],
+        help="Precision / quantization mode"
     )
 
     parser.add_argument(
         "--language",
         type=str,
         default=None,
-        help="Language code (e.g. 'es', 'en'). Use None for auto-detect"
+        help="Language code (es, en, fr...). Auto-detect if omitted"
     )
 
     parser.add_argument(
@@ -39,36 +55,36 @@ def parse_args():
         type=str,
         default="transcribe",
         choices=["transcribe", "translate"],
-        help="Task mode: transcribe (same language) or translate (to English)"
-    )    
+        help="Transcribe original audio or translate to English"
+    )
 
     parser.add_argument(
         "--input",
         type=str,
         default="data/input",
-        help="Input directory with media files"
+        help="Input directory"
     )
 
     parser.add_argument(
         "--output",
         type=str,
         default="data/output",
-        help="Output directory for transcripts"
+        help="Output directory"
     )
 
     parser.add_argument(
         "--formats",
         type=str,
-        nargs="+", # Permite múltiples valores ej: --formats txt srt vtt
+        nargs="+",
         choices=["txt", "srt", "vtt", "json", "tsv"],
-        default=["txt", "srt"], # Si no pone nada, da estos por defecto
-        help="Output formats to generate. Default: txt srt"
+        default=["txt", "srt"],
+        help="Output formats"
     )
 
     parser.add_argument(
         "--verbose",
         action="store_true",
-        help="Show detailed progress logs during transcription"
+        help="Show live transcription progress"
     )
-    
+
     return parser.parse_args()
