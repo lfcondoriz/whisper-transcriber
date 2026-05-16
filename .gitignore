@@ -221,3 +221,6 @@ __marimo__/
 data/*
 !data/input/.gitkeep
 !data/output/.gitkeep
+
+# files
+file.txt
