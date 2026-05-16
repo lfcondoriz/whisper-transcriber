@@ -56,4 +56,13 @@ def parse_args():
         help="Output directory for transcripts"
     )
 
+    parser.add_argument(
+        "--formats",
+        type=str,
+        nargs="+", # Permite múltiples valores ej: --formats txt srt vtt
+        choices=["txt", "srt", "vtt", "json", "tsv"],
+        default=["txt", "srt"], # Si no pone nada, da estos por defecto
+        help="Output formats to generate. Default: txt srt"
+    )
+    
     return parser.parse_args()

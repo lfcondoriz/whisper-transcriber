@@ -10,3 +10,4 @@ class Config:
     task: str
     input_dir: str
     output_dir: str
+    formats: list[str]

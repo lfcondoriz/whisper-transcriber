@@ -41,7 +41,8 @@ class WhisperTranscriber:
         export_manager = ExportManager(
             segments=segments,
             output_dir=self.output_dir,
-            file_path=file_path
+            file_path=file_path,
+            formats=self.config.formats
         )
         export_manager.export_all()
 
