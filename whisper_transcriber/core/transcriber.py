@@ -3,8 +3,10 @@ from faster_whisper import WhisperModel
 from whisper_transcriber.config import Config
 from whisper_transcriber.exporters.manager import ExportManager
 from whisper_transcriber.logger import setup_logger
+import time
 
 logger = setup_logger()
+
 
 class WhisperTranscriber:
     """Servicio principal para manejar las transcripciones con Faster-Whisper."""
@@ -39,22 +41,52 @@ class WhisperTranscriber:
         return True
 
     def transcribe_file(self, file_path: Path) -> None:
-        """Transcribe un solo archivo y delega la exportación."""
-        
+
         if self._is_already_processed(file_path):
-            logger.info(f"Skipped: {file_path.name} (Already processed in requested formats)")
+            logger.info(f"Skipped: {file_path.name} (Already processed)")
             return
-        # -----------------------------
 
         logger.info(f"Transcribing: {file_path.name}")
 
-        segments_generator, _ = self.model.transcribe(
+        start_time = time.time()
+
+        segments_generator, info = self.model.transcribe(
             str(file_path),
             language=self.config.language,
-            task=self.config.task
+            task=self.config.task,
+            beam_size=1,
+            vad_filter=False,
+            condition_on_previous_text=False,
         )
 
-        segments = list(segments_generator)
+        total_duration = info.duration
+        segments = []
+
+        last_logged_progress = 0
+
+        for segment in segments_generator:
+
+            segments.append(segment)
+
+            progress = (segment.end / total_duration) * 100 if total_duration else 0
+
+            elapsed = time.time() - start_time
+            eta = (
+                (elapsed / segment.end) * (total_duration - segment.end)
+                if segment.end > 0 else 0
+            )
+
+            # log cada ~5% o cada segmento largo
+            if progress - last_logged_progress > 5:
+
+                logger.info(
+                    f"[{progress:5.1f}%] "
+                    f"{segment.end:7.1f}s / {total_duration:7.1f}s | "
+                    f"ETA {eta:6.1f}s | "
+                    f"{segment.text.strip()}"
+                )
+
+                last_logged_progress = progress
 
         export_manager = ExportManager(
             segments=segments,
@@ -62,6 +94,7 @@ class WhisperTranscriber:
             file_path=file_path,
             formats=self.config.formats
         )
+
         export_manager.export_all()
 
         logger.info(f"Saved: {file_path.name} in {self.output_dir}")
