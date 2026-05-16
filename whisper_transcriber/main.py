@@ -14,7 +14,8 @@ def main():
         output_dir=args.output,
         language=args.language,
         task=args.task,
-        formats=args.formats
+        formats=args.formats,
+        verbose=args.verbose
     )
 
     # 2. Instanciamos nuestra nueva clase

@@ -64,5 +64,11 @@ def parse_args():
         default=["txt", "srt"], # Si no pone nada, da estos por defecto
         help="Output formats to generate. Default: txt srt"
     )
+
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Show detailed progress logs during transcription"
+    )
     
     return parser.parse_args()

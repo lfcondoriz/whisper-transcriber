@@ -11,3 +11,4 @@ class Config:
     input_dir: str
     output_dir: str
     formats: list[str]
+    verbose: bool = False

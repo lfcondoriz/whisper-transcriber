@@ -71,22 +71,26 @@ class WhisperTranscriber:
             progress = (segment.end / total_duration) * 100 if total_duration else 0
 
             elapsed = time.time() - start_time
-            eta = (
-                (elapsed / segment.end) * (total_duration - segment.end)
-                if segment.end > 0 else 0
-            )
+            
+            if segment.end > 5:
+                eta = (elapsed / segment.end) * (total_duration - segment.end)
+            else:
+                eta = 0
 
-            # log cada ~5% o cada segmento largo
-            if progress - last_logged_progress > 5:
-
+            if self.config.verbose:
                 logger.info(
                     f"[{progress:5.1f}%] "
                     f"{segment.end:7.1f}s / {total_duration:7.1f}s | "
                     f"ETA {eta:6.1f}s | "
                     f"{segment.text.strip()}"
                 )
-
-                last_logged_progress = progress
+            else:
+                if progress - last_logged_progress > 10:
+                    logger.info(
+                        f"[{progress:5.1f}%] "
+                        f"{segment.end:7.1f}s / {total_duration:7.1f}s"
+                    )
+                    last_logged_progress = progress
 
         export_manager = ExportManager(
             segments=segments,
