@@ -109,12 +109,12 @@ Utilizamos el videos de prueba de [YouTube - De PayPal a SpaceX: la apuesta que 
 ## Ejecución
 Default:
 ```bash
-python -m whisper_transcriber.main
+python -m whisper_transcriber
 ```
 
 Con opciones:
 ```bash
-python -m whisper_transcriber.main --model base --language es --task translate --device cuda --input data/input --output data/output
+python -m whisper_transcriber --model base --language es --task translate --device cuda --input data/input --output data/output
 ```
 Donde:
 - `--model`: el modelo de Whisper a usar (tiny, base, small, medium, large)
