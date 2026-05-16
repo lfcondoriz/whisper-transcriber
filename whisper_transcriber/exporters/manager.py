@@ -1,5 +1,8 @@
 from whisper_transcriber.exporters.txt import TXTExporter
 from whisper_transcriber.exporters.srt import SRTExporter
+from whisper_transcriber.exporters.vtt import VTTExporter
+from whisper_transcriber.exporters.json import JSONExporter
+from whisper_transcriber.exporters.tsv import TSVExporter
 from pathlib import Path
 from faster_whisper.transcribe import Segment
 
@@ -17,7 +20,10 @@ class ExportManager:
 
             self.exporters = [
                 TXTExporter,
-                SRTExporter
+                SRTExporter,
+                VTTExporter,
+                JSONExporter,
+                TSVExporter
             ]
 
     def export_all(self) -> None:

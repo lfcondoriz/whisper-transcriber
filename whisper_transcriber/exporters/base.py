@@ -27,3 +27,15 @@ class BaseExporter(ABC):
         )
 
         return output_file
+    
+    def format_time(self, seconds: float, separator: str = ",") -> str:
+            """
+            Convierte segundos a HH:MM:SS,MMM. 
+            Permite cambiar el separador (coma para SRT, punto para VTT).
+            """
+            hours = int(seconds // 3600)
+            minutes = int((seconds % 3600) // 60)
+            secs = int(seconds % 60)
+            milliseconds = int((seconds - int(seconds)) * 1000)
+            
+            return f"{hours:02}:{minutes:02}:{secs:02}{separator}{milliseconds:03}"
