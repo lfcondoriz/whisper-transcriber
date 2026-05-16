@@ -24,11 +24,30 @@ class WhisperTranscriber:
             compute_type=config.compute_type
         )
 
+    def _is_already_processed(self, file_path: Path) -> bool:
+        """
+        Comprueba si todos los formatos de salida solicitados 
+        ya existen para un archivo específico.
+        """
+        for fmt in self.config.formats:
+            expected_output_file = self.output_dir / f"{file_path.stem}.{fmt}"
+            # Si falta al menos uno de los formatos, necesitamos procesarlo
+            if not expected_output_file.exists():
+                return False
+        
+        # Si termina el bucle, significa que todos los archivos ya existen
+        return True
+
     def transcribe_file(self, file_path: Path) -> None:
         """Transcribe un solo archivo y delega la exportación."""
+        
+        if self._is_already_processed(file_path):
+            logger.info(f"Skipped: {file_path.name} (Already processed in requested formats)")
+            return
+        # -----------------------------
+
         logger.info(f"Transcribing: {file_path.name}")
 
-        # Ya no necesitamos pasar el modelo o el config, están en 'self'
         segments_generator, _ = self.model.transcribe(
             str(file_path),
             language=self.config.language,
@@ -37,7 +56,6 @@ class WhisperTranscriber:
 
         segments = list(segments_generator)
 
-        # Usamos el manager refactorizado del paso anterior
         export_manager = ExportManager(
             segments=segments,
             output_dir=self.output_dir,
