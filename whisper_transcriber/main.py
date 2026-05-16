@@ -1,12 +1,11 @@
 from whisper_transcriber.cli import parse_args
 from whisper_transcriber.config import Config
-from whisper_transcriber.core.model import create_model
-from whisper_transcriber.core.transcriber import process_input_files
-
+from whisper_transcriber.core.transcriber import WhisperTranscriber
 
 def main():
     args = parse_args()
 
+    # 1. Armamos la configuración
     config = Config(
         model=args.model,
         device=args.device,
@@ -17,10 +16,11 @@ def main():
         task=args.task
     )
 
-    model = create_model(config)
+    # 2. Instanciamos nuestra nueva clase
+    transcriber = WhisperTranscriber(config)
 
-    process_input_files(model, config)
-
+    # 3. Ejecutamos el flujo
+    transcriber.process_all()
 
 if __name__ == "__main__":
     main()
