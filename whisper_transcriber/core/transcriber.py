@@ -31,33 +31,40 @@ class WhisperTranscriber:
         return True
 
     def transcribe_file(self, file_path: Path) -> None:
-        if self._is_already_processed(file_path):
-            logger.info(f"Skipped: {file_path.name} (Already processed)")
-            return
+        """Transcribe un solo archivo de forma segura y transaccional."""
+        try:
+            if self._is_already_processed(file_path):
+                logger.info(f"Skipped: {file_path.name} (Already processed)")
+                return
 
-        logger.info(f"Transcribing: {file_path.name}")
+            logger.info(f"Transcribing: {file_path.name}")
 
-        segments_generator, info = self.model.transcribe(
-            str(file_path),
-            language=self.config.language,
-            task=self.config.task,
-            beam_size=1,
-            vad_filter=False,
-            condition_on_previous_text=False,
-        )
+            segments_generator, info = self.model.transcribe(
+                str(file_path),
+                language=self.config.language,
+                task=self.config.task,
+                beam_size=1,
+                vad_filter=False,
+                condition_on_previous_text=False,
+            )
 
-        tracker = ProgressTracker(info.duration, self.config.verbose)
-        segments = tracker.track(segments_generator)
+            tracker = ProgressTracker(info.duration, self.config.verbose)
+            segments = tracker.track(segments_generator)
 
-        export_manager = ExportManager(
-            segments=segments,
-            output_dir=self.output_dir,
-            file_path=file_path,
-            formats=self.config.formats
-        )
-        export_manager.export_all()
+            export_manager = ExportManager(
+                segments=segments,
+                output_dir=self.output_dir,
+                file_path=file_path,
+                formats=self.config.formats
+            )
+            
+            export_manager.export_all()
 
-        logger.info(f"Saved: {file_path.name} in {self.output_dir}")
+            logger.info(f"Saved: {file_path.name} in {self.output_dir}")
+
+        except Exception:
+            # Atrapa cualquier error (OOM, archivo corrupto) y guarda el stacktrace completo
+            logger.exception(f"Failed processing {file_path.name}")
 
     def process_all(self) -> None:
         self.output_dir.mkdir(parents=True, exist_ok=True)
