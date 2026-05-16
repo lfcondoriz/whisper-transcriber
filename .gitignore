@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Folder
+data/*
+!data/input/.gitkeep
+!data/output/.gitkeep
