@@ -123,3 +123,32 @@ Donde:
 - `--output`: la carpeta de salida donde se guardarán las transcripciones
 - `--language`: el código del idioma (por ejemplo, 'es', 'en'). Usa None para auto-detección
 - `--task`: el modo de tarea: transcribe (mismo idioma) o translate (a inglés) (Whisper NO tiene traducción multi-idioma real SOLO en inglés.)
+
+# 🧠 Modelos Whisper (actualizado 2026)
+| Modelo         | Parámetros | Idioma                   | VRAM aprox | Velocidad relativa | Estado                                  |
+| -------------- | ---------- | ------------------------ | ---------- | ------------------ | --------------------------------------- |
+| tiny           | 39M        | Multilingual / tiny.en   | ~1 GB      | ~10×               | activo                                  |
+| base           | 74M        | Multilingual / base.en   | ~1 GB      | ~7×                | activo                                  |
+| small          | 244M       | Multilingual / small.en  | ~2 GB      | ~4×                | activo                                  |
+| medium         | 769M       | Multilingual / medium.en | ~5 GB      | ~2×                | activo                                  |
+| large-v2       | 1.55B      | Multilingual             | ~10 GB     | 1×                 | legado                                  |
+| large-v3       | 1.55B      | Multilingual             | ~10 GB     | 1×                 | **actual estándar de máxima precisión** |
+| large-v3-turbo | 0.81B      | Multilingual             | ~6 GB      | ~6–8×              | **recomendado general (equilibrio)**    |
+
+# ⚔️ Whisper vs faster-whisper (2026)
+| Característica           | OpenAI Whisper                             | faster-whisper                                                 |
+| ------------------------ | ------------------------------------------ | -------------------------------------------------------------- |
+| Motor                    | PyTorch (implementación original)          | CTranslate2 optimizado                                         |
+| Precisión                | Igual (depende del modelo: large-v3, etc.) | Igual (mismos pesos del modelo)                                |
+| Velocidad                | 1× (baseline)                              | 4× a 8× más rápido ([LocalAlternative][1])                     |
+| Uso de VRAM              | Alto (FP16 típico)                         | 30–60% menos VRAM (INT8/FP16 optimizado) ([LLMHardware.io][2]) |
+| CPU                      | Más lento                                  | Mucho más eficiente (INT8 + SIMD)                              |
+| GPU                      | Necesario para grande/fluido               | Mejor aprovechado (CUDA optimizado)                            |
+| Modelos soportados       | tiny → large-v3                            | tiny → large-v3 / large-v3-turbo                               |
+| Streaming / tiempo real  | Limitado                                   | Mejor soporte (batch + streaming)                              |
+| Producción               | Menos usado                                | **Estándar en producción**                                     |
+| Compatibilidad           | Oficial OpenAI                             | Wrapper compatible (mismos modelos)                            |
+| Diarización (speaker ID) | No nativo                                  | No nativo (pero se integra mejor con pipelines tipo WhisperX)  |
+
+[1]: https://www.localalternative.io/compare/whisper-vs-faster-whisper?utm_source=chatgpt.com "Whisper vs Faster-Whisper: Best Local Transcription? (2026) | LocalAlternative"
+[2]: https://llmhardware.io/guides/whisper-local-hardware-guide?utm_source=chatgpt.com "Whisper Local Hardware Requirements: GPU, CPU, Apple Silicon (2026) | LLMHardware.io"
